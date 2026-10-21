@@ -28,6 +28,7 @@ def declare_queue(channel: pika.adapters.blocking_connection.BlockingChannel,
     channel.queue_declare(queue=queue, durable=True)
 
 
+
 def publish_confirmed(channel, queue: str, body: bytes,
                       message_id: str | None = None) -> None:
     properties = pika.BasicProperties(

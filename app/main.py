@@ -33,17 +33,17 @@ def run_once() -> None:
         declare_queue(source_channel, SOURCE.queue)
         source_channel.basic_qos(prefetch_count=PREFETCH_COUNT)
 
-        logger.info("Łączenie z docelowym RabbitMQ: %s:%s", TARGET.host, TARGET.port)
-        target_connection = connect(TARGET)
-        target_channel = target_connection.channel()
-        declare_queue(target_channel, TARGET.queue)
-        target_channel.confirm_delivery()
+        # logger.info("Łączenie z docelowym RabbitMQ: %s:%s", TARGET.host, TARGET.port)
+        # target_connection = connect(TARGET)
+        # target_channel = target_connection.channel()
+        declare_queue(source_channel, TARGET.queue)
+        source_channel.confirm_delivery()
 
         def callback(ch, method, properties, body: bytes):
             try:
                 result = process_message(body)
                 publish_confirmed(
-                    target_channel,
+                    source_channel,
                     TARGET.queue,
                     result,
                     message_id=getattr(properties, "message_id", None),

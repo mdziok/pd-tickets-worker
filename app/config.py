@@ -32,5 +32,6 @@ def _rabbit_settings(prefix: str, default_queue: str) -> RabbitSettings:
 
 SOURCE = _rabbit_settings("SOURCE_RABBITMQ", "incoming")
 TARGET = _rabbit_settings("TARGET_RABBITMQ", "processed")
+# TARGET = _rabbit_settings("TARGET_RABBITMQ", "processed")
 PREFETCH_COUNT = max(1, int(os.getenv("PREFETCH_COUNT", "10")))
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
