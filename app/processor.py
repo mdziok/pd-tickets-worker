@@ -1,5 +1,6 @@
 import json
 from datetime import datetime, timezone
+from categorizer import categorize_ticket
 
 
 def process_message(body: bytes) -> bytes:
@@ -11,14 +12,14 @@ def process_message(body: bytes) -> bytes:
     if not isinstance(data, dict):
         raise ValueError("Wiadomość musi być obiektem JSON (nie tablicą ani skalarem)")
 
-    # TODO - przypisywanie kategorii
+    category = categorize_ticket(data["message"])
 
     result = {
         "message": data["message"],
         "user": data["user"],
         "send_time": data["send_time"],
         "processed_at": datetime.now(timezone.utc).isoformat(),
-        "category": "EXAMPLE",
+        "category": category,
     }
 
     return json.dumps(result, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
