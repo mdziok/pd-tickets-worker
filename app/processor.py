@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, timezone
-from categorizer import categorize_ticket
+from ollama_client import analyze_ticket
 
 
 def process_message(body: bytes) -> bytes:
@@ -12,7 +12,7 @@ def process_message(body: bytes) -> bytes:
     if not isinstance(data, dict):
         raise ValueError("Wiadomość musi być obiektem JSON (nie tablicą ani skalarem)")
 
-    category = categorize_ticket(data["message"])
+    category = analyze_ticket(data["message"])
 
     result = {
         "message": data["message"],
