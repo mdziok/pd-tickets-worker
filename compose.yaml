@@ -1,0 +1,40 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    hostname: rabbit-source
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: user
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - source_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  worker:
+    build: .
+    environment:
+      SOURCE_RABBITMQ_HOST: rabbitmq
+      SOURCE_RABBITMQ_PORT: "5672"
+      SOURCE_RABBITMQ_USER: user
+      SOURCE_RABBITMQ_PASSWORD: user
+      SOURCE_RABBITMQ_QUEUE: incoming
+      TARGET_RABBITMQ_HOST: rabbitmq
+      TARGET_RABBITMQ_PORT: "5672"
+      TARGET_RABBITMQ_USER: user
+      TARGET_RABBITMQ_PASSWORD: user
+      TARGET_RABBITMQ_QUEUE: processed
+      PREFETCH_COUNT: "10"
+      LOG_LEVEL: INFO
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  source_data:
+  target_data:
