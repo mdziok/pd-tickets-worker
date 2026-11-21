@@ -28,6 +28,16 @@ def declare_queue(channel: pika.adapters.blocking_connection.BlockingChannel,
     channel.queue_declare(queue=queue, durable=True)
 
 
+def declare_dead_letter_queue(channel, source_queue: str) -> None:
+    dlq_name = f"{source_queue}.dlq"
+
+    channel.queue_declare(
+        queue=dlq_name,
+        durable=True,
+    )
+
+    logger.info("Zadeklarowano DLQ: %s", dlq_name)
+
 
 def publish_confirmed(channel, queue: str, body: bytes,
                       message_id: str | None = None) -> None:
